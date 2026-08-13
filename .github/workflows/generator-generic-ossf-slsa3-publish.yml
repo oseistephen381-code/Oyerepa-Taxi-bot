@@ -1,0 +1,90 @@
+# This workflow *{box-sizing:border-box}
+body{margin:0;background:#f5f7fb;color:#111827;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{height:70px;padding:0 6%;display:flex;align-items:center;justify-content:space-between;background:#111827;color:#fff}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:1px}
+.brand small{font-size:9px;letter-spacing:2px;color:#fbbf24}
+.outline{border:1px solid #d1d5db;background:#fff;color:#111827;border-radius:10px;padding:10px 14px;font-weight:700}
+.hero{padding:70px 6% 45px;background:linear-gradient(135deg,#111827,#1f2937);color:#fff}
+.hero h1{font-size:clamp(42px,9vw,76px);line-height:.95;margin:18px 0 14px}
+.hero h1 i{color:#fbbf24}
+.hero p{max-width:600px;font-size:18px;color:#d1d5db}
+.badge{display:inline-block;background:#fef3c7;color:#92400e;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:800}
+.card{max-width:900px;margin:28px auto;padding:24px;background:#fff;border-radius:20px;box-shadow:0 12px 35px #00000012}
+.card label{display:block;font-weight:800;margin-bottom:10px}
+.input{display:flex;align-items:center;gap:10px;border:2px solid #e5e7eb;border-radius:14px;padding:0 14px}
+.input input{width:100%;border:0;outline:0;padding:17px 4px;font-size:16px}
+.examples{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.examples button{border:0;background:#f3f4f6;padding:8px 11px;border-radius:999px}
+.primary{width:100%;border:0;border-radius:13px;background:#f59e0b;color:#111827;padding:15px;font-weight:900;font-size:16px}
+.result{margin-top:16px;border-radius:14px;background:#f9fafb;padding:18px}
+.hidden{display:none}
+.grid{max-width:900px;margin:0 auto 30px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 16px}
+.grid article{background:#fff;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:7px}
+.grid span{color:#6b7280;font-size:14px}
+footer{text-align:center;padding:25px;background:#111827;color:#9ca3af}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.hero{padding-top:45px}.card{margin:20px 12px}} actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow lets you generate SLSA provenance file for your project.
+# The generation satisfies level 3 for the provenance requirements - see https://slsa.dev/spec/v0.1/requirements
+# The project is an initiative of the OpenSSF (openssf.org) and is developed at
+# https://github.com/slsa-framework/slsa-github-generator.
+# The provenance file can be verified using https://github.com/slsa-framework/slsa-verifier.
+# For more information about SLSA and how it improves the supply-chain, visit slsa.dev.
+
+name: SLSA generic generator
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      digests: ${{ steps.hash.outputs.digests }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ========================================================
+      #
+      # Step 1: Build your artifacts.
+      #
+      # ========================================================
+      - name: Build artifacts
+        run: |
+            # These are some amazing artifacts.
+            echo "artifact1" > artifact1
+            echo "artifact2" > artifact2
+
+      # ========================================================
+      #
+      # Step 2: Add a step to generate the provenance subjects
+      #         as shown below. Update the sha256 sum arguments
+      #         to include all binaries that you generate
+      #         provenance for.
+      #
+      # ========================================================
+      - name: Generate subject for provenance
+        id: hash
+        run: |
+          set -euo pipefail
+
+          # List the artifacts the provenance will refer to.
+          files=$(ls artifact*)
+          # Generate the subjects (base64 encoded).
+          echo "hashes=$(sha256sum $files | base64 -w0)" >> "${GITHUB_OUTPUT}"
+
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read   # To read the workflow path.
+      id-token: write # To sign the provenance.
+      contents: write # To add assets to a release.
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.4.0
+    with:
+      base64-subjects: "${{ needs.build.outputs.digests }}"
+      upload-assets: true # Optional: Upload to a new release
