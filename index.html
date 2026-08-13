@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ghana AI — Multilingual Assistant</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">GH</div><div><strong>Ghana AI</strong><span>Akwaaba • AI for Ghana</span></div></div>
+    <button id="newChat" class="new-chat">＋ New conversation</button>
+    <div class="side-title">Modes</div>
+    <button class="mode active" data-mode="Chat">💬 Chat</button>
+    <button class="mode" data-mode="Translation">🌍 Translation</button>
+    <button class="mode" data-mode="Teaching">🎓 Teaching</button>
+    <div class="side-title">Language</div>
+    <select id="language">
+      <option>English</option><option>Twi</option><option>Fante</option><option>Ga</option><option>Ewe</option>
+      <option>Dagbani</option><option>Dagaare</option><option>Gonja</option><option>Nzema</option><option>Kasem</option><option>Hausa</option>
+    </select>
+    <div class="side-note">Your API key stays on the server, not in browser JavaScript.</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button id="menu" class="icon-btn">☰</button>
+      <div><b id="modeTitle">Chat</b><small id="status">Demo interface</small></div>
+      <button id="clear" class="icon-btn">⌫</button>
+    </header>
+
+    <section id="chat" class="chat">
+      <div class="welcome">
+        <div class="big-logo">GH</div>
+        <h1>Akwaaba to Ghana AI</h1>
+        <p>Chat, translate and learn across Ghanaian languages.</p>
+        <div class="cards">
+          <button class="prompt" data-prompt="Teach me five useful Twi greetings">🎓 Teach me five useful Twi greetings</button>
+          <button class="prompt" data-prompt="Translate “Good morning, my friend” into Twi">🌍 Translate a greeting into Twi</button>
+          <button class="prompt" data-prompt="Tell me about Ghana in a friendly way">🇬🇭 Tell me about Ghana</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="composer-wrap">
+      <div class="composer">
+        <textarea id="message" rows="1" placeholder="Ask Ghana AI anything..."></textarea>
+        <button id="mic" class="round" title="Voice input">🎙️</button>
+        <button id="send" class="send">➤</button>
+      </div>
+      <div class="hint">Press Enter to send • Shift+Enter for a new line</div>
+    </div>
+  </main>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
